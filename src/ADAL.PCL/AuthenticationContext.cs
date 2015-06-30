@@ -481,7 +481,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         public async Task<Uri> GetAuthorizationRequestUrlAsync(string resource, string clientId, Uri redirectUri, UserIdentifier userId, string extraQueryParameters)
         {
             var handler = new AcquireTokenInteractiveHandler(this.Authenticator, this.TokenCache, resource, clientId, redirectUri, null, userId, extraQueryParameters, null);
-            return await handler.CreateAuthorizationUriAsync(this.CorrelationId);
+            DictionaryRequestParameters requestParameters = await handler.CreateAuthorizationUriAsync(this.CorrelationId);
+            return new Uri(new Uri(this.Authenticator.AuthorizationUri), "?" + requestParameters);
         }
 
         /// <summary>

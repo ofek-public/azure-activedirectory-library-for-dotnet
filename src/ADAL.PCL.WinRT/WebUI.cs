@@ -39,7 +39,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             this.useCorporateNetwork = ((AuthorizationParameters)parameters).UseCorporateNetwork;
         }
 
-        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, CallState callState)
+        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, DictionaryRequestParameters requestParameters, CallState callState)
         {
             bool ssoMode = ReferenceEquals(redirectUri, Constant.SsoPlaceHolderUri);
             if (this.promptBehavior == PromptBehavior.Never && !ssoMode && redirectUri.Scheme != Constant.MsAppScheme)

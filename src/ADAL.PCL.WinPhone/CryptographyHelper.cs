@@ -31,32 +31,6 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         // This descriptor does not require the enterprise authentication capability.
         private const string ProtectionDescriptor = "LOCAL=user";
         
-        public static string Encrypt(string message)
-        {
-            if (string.IsNullOrEmpty(message))
-            {
-                return message;
-            }
-
-            DataProtectionProvider dataProtectionProvider = new DataProtectionProvider(ProtectionDescriptor);
-            IBuffer messageBuffer = CryptographicBuffer.ConvertStringToBinary(message, BinaryStringEncoding.Utf8);
-            IBuffer protectedBuffer = RunAsyncTaskAndWait(dataProtectionProvider.ProtectAsync(messageBuffer).AsTask());
-            return Convert.ToBase64String(protectedBuffer.ToArray(0, (int)protectedBuffer.Length));
-        }
-
-        public static string Decrypt(string encryptedMessage)
-        {
-            if (string.IsNullOrEmpty(encryptedMessage))
-            {
-                return encryptedMessage;
-            }
-
-            DataProtectionProvider dataProtectionProvider = new DataProtectionProvider(ProtectionDescriptor);
-            IBuffer messageBuffer = Convert.FromBase64String(encryptedMessage).AsBuffer();
-            IBuffer unprotectedBuffer = RunAsyncTaskAndWait(dataProtectionProvider.UnprotectAsync(messageBuffer).AsTask());
-            return CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, unprotectedBuffer);
-        }
-
         public static byte[] Encrypt(byte[] message)
         {
             if (message == null)

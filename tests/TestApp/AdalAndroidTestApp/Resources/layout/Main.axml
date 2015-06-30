@@ -6,10 +6,20 @@
     android:minWidth="25px"
     android:minHeight="25px">
     <Button
+        android:text="Clear Token Cache"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/clearTokenCacheButton" />
+    <Button
         android:text="Acquire Token Interactive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/acquireTokenInteractiveButton" />
+    <Button
+        android:text="Acquire Token via Broker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/acquireTokenViaBrokerButton" />
     <Button
         android:text="Acquire Token Username/Password"
         android:layout_width="match_parent"
@@ -25,5 +35,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/accessTokenTextView"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginBottom="200.9dp" />
 </LinearLayout>

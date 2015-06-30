@@ -25,6 +25,7 @@ using Android.OS;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 using TestApp.PCL;
+using Android.Webkit;
 
 namespace AdalAndroidTestApp
 {
@@ -32,6 +33,7 @@ namespace AdalAndroidTestApp
     public class MainActivity : Activity
     {
         private TextView accessTokenTextView;
+        private TokenBroker tokenBroker;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -40,8 +42,14 @@ namespace AdalAndroidTestApp
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+            Button clearTokenCacheButton = FindViewById<Button>(Resource.Id.clearTokenCacheButton);
+            clearTokenCacheButton.Click += clearTokenCacheButton_Click;
+
             Button acquireTokenInteractiveButton = FindViewById<Button>(Resource.Id.acquireTokenInteractiveButton);
             acquireTokenInteractiveButton.Click += acquireTokenInteractiveButton_Click;
+
+            Button acquireTokenViaBrokerButton = FindViewById<Button>(Resource.Id.acquireTokenViaBrokerButton);
+            acquireTokenViaBrokerButton.Click += acquireTokenViaBrokerButton_Click;
 
             Button acquireTokenUPButton = FindViewById<Button>(Resource.Id.acquireTokenUPButton);
             acquireTokenUPButton.Click += acquireTokenUPButton_Click;
@@ -50,9 +58,16 @@ namespace AdalAndroidTestApp
             acquireTokenWithClientCredentialButton.Click += acquireTokenWithClientCredentialButton_Click;
 
             this.accessTokenTextView = FindViewById<TextView>(Resource.Id.accessTokenTextView);
+
+            this.tokenBroker = new TokenBroker();
         }
 
-        protected override async void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        void clearTokenCacheButton_Click(object sender, EventArgs e)
+        {
+            tokenBroker.ClearTokenCache();
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             AuthenticationAgentContinuationHelper.SetAuthenticationAgentContinuationEventArgs(requestCode, resultCode, data);
 
@@ -62,23 +77,27 @@ namespace AdalAndroidTestApp
         private async void acquireTokenUPButton_Click(object sender, EventArgs e)
         {
             this.accessTokenTextView.Text = string.Empty;
-            TokenBroker tokenBroker = new TokenBroker();
             string token = await tokenBroker.GetTokenWithUsernamePasswordAsync();
+            this.accessTokenTextView.Text = token;
+        }
+
+        private async void acquireTokenViaBrokerButton_Click(object sender, EventArgs e)
+        {
+            this.accessTokenTextView.Text = string.Empty;
+            string token = await tokenBroker.GetTokenInteractiveAsync(new AuthorizationParameters(this, false));
             this.accessTokenTextView.Text = token;
         }
 
         private async void acquireTokenInteractiveButton_Click(object sender, EventArgs e)
         {
             this.accessTokenTextView.Text = string.Empty;
-            TokenBroker tokenBroker = new TokenBroker();
-            string token = await tokenBroker.GetTokenInteractiveAsync(new AuthorizationParameters(this));
+            string token = await tokenBroker.GetTokenInteractiveAsync(new AuthorizationParameters(this, true));
             this.accessTokenTextView.Text = token;
         }
 
         private async void acquireTokenWithClientCredentialButton_Click(object sender, EventArgs e)
         {
             this.accessTokenTextView.Text = string.Empty;
-            TokenBroker tokenBroker = new TokenBroker();
             string token = await tokenBroker.GetTokenWithClientCredentialAsync();
             this.accessTokenTextView.Text = token;
         }

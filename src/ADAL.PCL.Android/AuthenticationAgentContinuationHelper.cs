@@ -18,6 +18,8 @@
 
 using Android.App;
 using Android.Content;
+using Android.OS;
+using System;
 
 namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 {
@@ -26,10 +28,11 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         public static void SetAuthenticationAgentContinuationEventArgs(int requestCode, Result resultCode, Intent data)
         {
             AuthorizationResult authorizationResult;
-            switch (resultCode)
+            switch ((int)resultCode)
             {
-                case Result.Ok: authorizationResult= new AuthorizationResult(AuthorizationStatus.Success, data.GetStringExtra("ReturnedUrl")); break;
-                case Result.Canceled: authorizationResult = new AuthorizationResult(AuthorizationStatus.UserCancel, null); break;
+                case (int)Result.Ok: authorizationResult= new AuthorizationResult(AuthorizationStatus.Success, data.GetStringExtra("ReturnedUrl")); break;
+                case (int)Result.Canceled: authorizationResult = new AuthorizationResult(AuthorizationStatus.UserCancel, null); break;
+                case 2004: authorizationResult = WebUI.GetResultFromBroker(data); break;
                 default: authorizationResult = new AuthorizationResult(AuthorizationStatus.UnknownError, null); break;
             }
 

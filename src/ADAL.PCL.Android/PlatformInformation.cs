@@ -16,6 +16,7 @@
 // limitations under the License.
 //----------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 
 namespace Microsoft.IdentityModel.Clients.ActiveDirectory
@@ -52,6 +53,22 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         public override string GetDeviceModel()
         {
             return null;
+        }
+
+        public override bool GetCacheLoadPolicy(IAuthorizationParameters parameters)
+        {
+            AuthorizationParameters authorizationParameters = (parameters as AuthorizationParameters);
+            if (authorizationParameters == null)
+            {
+                throw new ArgumentException("parameters should be of type AuthorizationParameters", "parameters");
+            }
+
+            return authorizationParameters.SkipBroker;
+        }
+
+        public override bool GetCacheStorePolicy(IAuthorizationParameters parameters)
+        {
+            return this.GetCacheLoadPolicy(parameters);
         }
     }
 }

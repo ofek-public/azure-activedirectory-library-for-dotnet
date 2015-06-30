@@ -66,17 +66,17 @@ namespace Test.ADAL.NET.Unit
             const string AdditionalParameter2 = "additional_parameter2";
             string expectedString = string.Format("client_id=client_id&{0}={1}&{2}={3}", AdditionalParameter, EncodingHelper.UrlEncode(ComplexString), AdditionalParameter2, EncodingHelper.UrlEncode(ComplexString2));
 
-            var param = new DictionaryRequestParameters(null, new ClientKey(ClientId));
+            var param = new DictionaryRequestParameters(null, null, new ClientKey(ClientId));
             param[AdditionalParameter] = ComplexString;
             param[AdditionalParameter2] = ComplexString2;
             Verify.AreEqual(expectedString, param.ToString());
 
-            param = new DictionaryRequestParameters(null, new ClientKey(ClientId));
+            param = new DictionaryRequestParameters(null, null, new ClientKey(ClientId));
             param[AdditionalParameter] = ComplexString;
             param[AdditionalParameter2] = ComplexString2;
             Verify.AreEqual(expectedString, param.ToString());
 
-            param = new DictionaryRequestParameters(null, new ClientKey(ClientId));
+            param = new DictionaryRequestParameters(null, null, new ClientKey(ClientId));
             param[AdditionalParameter] = ComplexString;
             param[AdditionalParameter2] = ComplexString2;
             Verify.AreEqual(expectedString, param.ToString());

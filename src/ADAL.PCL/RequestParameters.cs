@@ -27,8 +27,10 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
     internal class DictionaryRequestParameters : Dictionary<string, string>, IRequestParameters
     {
-        public DictionaryRequestParameters(string resource, ClientKey clientKey)
+        public DictionaryRequestParameters(string authority, string resource, ClientKey clientKey)
         {
+            this.Authority = authority;
+
             if (!string.IsNullOrWhiteSpace(resource))
             {
                 this[OAuthParameter.Resource] = resource;
@@ -36,6 +38,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
             clientKey.AddToParameters(this);    
         }
+
+        public string Authority { get; set; }
 
         public string ExtraQueryParameter { get; set; }
 

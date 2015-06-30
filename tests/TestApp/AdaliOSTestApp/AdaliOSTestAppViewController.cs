@@ -28,9 +28,12 @@ namespace AdaliOSTestApp
 {
     public partial class AdaliOSTestAppViewController : UIViewController
     {
+        private TokenBroker tokenBroker;
+
         public AdaliOSTestAppViewController(IntPtr handle)
             : base(handle)
         {
+            this.tokenBroker = new TokenBroker();
         }
 
         public override void DidReceiveMemoryWarning()
@@ -77,7 +80,6 @@ namespace AdaliOSTestApp
             try
             {
                 ReportLabel.Text = string.Empty;
-                TokenBroker tokenBroker = new TokenBroker();
                 string token = await tokenBroker.GetTokenInteractiveAsync(new AuthorizationParameters(this));
                 ReportLabel.Text = token;
             }
@@ -92,7 +94,6 @@ namespace AdaliOSTestApp
             try
             {
                 ReportLabel.Text = string.Empty;
-                TokenBroker tokenBroker = new TokenBroker();
                 string token = await tokenBroker.GetTokenWithUsernamePasswordAsync();
                 ReportLabel.Text = token;
             }
@@ -107,7 +108,6 @@ namespace AdaliOSTestApp
             try
             {
                 ReportLabel.Text = string.Empty;
-                TokenBroker tokenBroker = new TokenBroker();
                 string token = await tokenBroker.GetTokenWithClientCredentialAsync();
                 ReportLabel.Text = token;
             }
@@ -115,6 +115,11 @@ namespace AdaliOSTestApp
             {
                 throw ex;
             }
+        }
+
+        partial void UIButton40_TouchUpInside(UIButton sender)
+        {
+            this.tokenBroker.ClearTokenCache();
         }
     }
 }

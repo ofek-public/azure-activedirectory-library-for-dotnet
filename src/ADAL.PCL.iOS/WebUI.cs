@@ -37,7 +37,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             }
         }
 
-        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, CallState callState)
+        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, DictionaryRequestParameters requestParameters, CallState callState)
         {
             returnedUriReady = new SemaphoreSlim(0);
             Authenticate(authorizationUri, redirectUri, callState);

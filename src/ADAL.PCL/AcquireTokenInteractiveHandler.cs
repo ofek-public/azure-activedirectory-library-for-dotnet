@@ -73,6 +73,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             this.UserIdentifierType = userId.Type;
 
             this.LoadFromCache = (tokenCache != null && parameters != null && PlatformPlugin.PlatformInformation.GetCacheLoadPolicy(parameters));
+            this.StoreToCache = (tokenCache != null && parameters != null && PlatformPlugin.PlatformInformation.GetCacheStorePolicy(parameters));
 
             this.SupportADFS = true;
         }
@@ -88,8 +89,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
         internal async Task AcquireAuthorizationAsync()
         {
-            Uri authorizationUri = this.CreateAuthorizationUri(await IncludeFormsAuthParamsAsync());
-            this.authorizationResult = await this.webUi.AcquireAuthorizationAsync(authorizationUri, this.redirectUri, this.CallState);
+            DictionaryRequestParameters requestParameters = this.CreateAuthorizationUri(await IncludeFormsAuthParamsAsync());
+            Uri authorizationUri = new Uri(new Uri(this.Authenticator.AuthorizationUri), "?" + requestParameters);
+            this.authorizationResult = await this.webUi.AcquireAuthorizationAsync(authorizationUri, this.redirectUri, requestParameters, this.CallState);
         }
 
         internal async Task<bool> IncludeFormsAuthParamsAsync()
@@ -97,7 +99,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             return (await PlatformPlugin.PlatformInformation.IsUserLocalAsync(this.CallState)) && PlatformPlugin.PlatformInformation.IsDomainJoined();
         }
 
-        internal async Task<Uri> CreateAuthorizationUriAsync(Guid correlationId)
+        internal async Task<DictionaryRequestParameters> CreateAuthorizationUriAsync(Guid correlationId)
         {
             this.CallState.CorrelationId = correlationId;
             await this.Authenticator.UpdateFromTemplateAsync(this.CallState);
@@ -105,9 +107,22 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         }
         protected override void AddAditionalRequestParameters(DictionaryRequestParameters requestParameters)
         {
-            requestParameters[OAuthParameter.GrantType] = OAuthGrantType.AuthorizationCode;
-            requestParameters[OAuthParameter.Code] = this.authorizationResult.Code;
-            requestParameters[OAuthParameter.RedirectUri] = this.redirectUriRequestParameter;
+            if (this.authorizationResult.Status == AuthorizationStatus.Success)
+            {
+                requestParameters[OAuthParameter.GrantType] = OAuthGrantType.AuthorizationCode;
+                requestParameters[OAuthParameter.Code] = this.authorizationResult.Code;
+                requestParameters[OAuthParameter.RedirectUri] = this.redirectUriRequestParameter;
+            }
+        }
+
+        protected override async Task<AuthenticationResult> SendTokenRequestAsync()
+        {
+            if (this.authorizationResult.Status == AuthorizationStatus.TokenSuccess)
+            {
+                return this.authorizationResult.TokenResult;
+            }
+
+            return await base.SendTokenRequestAsync();
         }
 
         protected override void PostTokenRequest(AuthenticationResult result)
@@ -132,7 +147,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             }
         }
 
-        private Uri CreateAuthorizationUri(bool includeFormsAuthParam)
+        private DictionaryRequestParameters CreateAuthorizationUri(bool includeFormsAuthParam)
         {
             string loginHint = null;
 
@@ -143,14 +158,12 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
                 loginHint = userId.Id;
             }
 
-            IRequestParameters requestParameters = this.CreateAuthorizationRequest(loginHint, includeFormsAuthParam);
-
-            return  new Uri(new Uri(this.Authenticator.AuthorizationUri), "?" + requestParameters);
+            return this.CreateAuthorizationRequest(loginHint, includeFormsAuthParam);
         }
 
         private DictionaryRequestParameters CreateAuthorizationRequest(string loginHint, bool includeFormsAuthParam)
         {
-            var authorizationRequestParameters = new DictionaryRequestParameters(this.Resource, this.ClientKey);
+            var authorizationRequestParameters = new DictionaryRequestParameters(this.Authenticator.Authority, this.Resource, this.ClientKey);
             authorizationRequestParameters[OAuthParameter.ResponseType] = OAuthResponseType.Code;
 
             authorizationRequestParameters[OAuthParameter.RedirectUri] = this.redirectUriRequestParameter;
@@ -209,7 +222,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
                 throw new AdalException(AdalError.UserInteractionRequired);
             }
 
-            if (this.authorizationResult.Status != AuthorizationStatus.Success)
+            if (this.authorizationResult.Status != AuthorizationStatus.Success && this.authorizationResult.Status != AuthorizationStatus.TokenSuccess)
             {
                 throw new AdalServiceException(this.authorizationResult.Error, this.authorizationResult.ErrorDescription);
             }

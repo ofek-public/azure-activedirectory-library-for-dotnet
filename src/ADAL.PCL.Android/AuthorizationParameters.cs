@@ -17,6 +17,7 @@
 //----------------------------------------------------------------------
 
 using Android.App;
+using System;
 
 namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 {
@@ -25,14 +26,17 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
     /// </summary>
     public class AuthorizationParameters : IAuthorizationParameters
     {
-        public AuthorizationParameters(Activity callerActivity)
+        public AuthorizationParameters(Activity callerActivity, bool skipBroker = true)
         {
             this.CallerActivity = callerActivity;
+            this.SkipBroker = skipBroker;
         }
 
         /// <summary>
         /// Caller Android Activity
         /// </summary>
-        public Activity CallerActivity { get; private set; } 
+        public Activity CallerActivity { get; private set; }
+
+        public bool SkipBroker { get; private set; }
     }
 }

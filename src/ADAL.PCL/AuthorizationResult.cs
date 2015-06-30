@@ -28,7 +28,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         ErrorHttp,
         ProtocolError,
         UserCancel,
-        UnknownError
+        UnknownError,
+        TokenSuccess
     }
 
     [DataContract]
@@ -49,6 +50,12 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             }
         }
 
+        internal AuthorizationResult(string accessToken, UserInfo userInfo, DateTimeOffset expiresOn)
+        {
+            this.Status = AuthorizationStatus.TokenSuccess;
+            this.TokenResult = new AuthenticationResult("", accessToken, null, expiresOn) { UserInfo = userInfo };
+        }
+
         public AuthorizationStatus Status { get; private set; }
 
         [DataMember]
@@ -59,6 +66,8 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
         [DataMember]
         public string ErrorDescription { get; private set; }
+
+        public AuthenticationResult TokenResult { get; private set; }
 
         public void ParseAuthorizeResponse(string webAuthenticationResult)
         {

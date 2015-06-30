@@ -37,7 +37,7 @@ namespace Test.ADAL.NET.Friend
             this.internalWebUI = (new WebUIFactory()).CreateAuthenticationDialog(parameters);
         }
 
-        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri requestUri, Uri callbackUri, CallState callState)
+        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri requestUri, Uri callbackUri, DictionaryRequestParameters requestParameters, CallState callState)
         {
             string key = requestUri.AbsoluteUri + callbackUri.AbsoluteUri;
             string value = null;
@@ -64,7 +64,7 @@ namespace Test.ADAL.NET.Friend
 
             try
             {
-                AuthorizationResult result = await this.internalWebUI.AcquireAuthorizationAsync(requestUri, callbackUri, callState);
+                AuthorizationResult result = await this.internalWebUI.AcquireAuthorizationAsync(requestUri, callbackUri, null, callState);
                 const string DummyUri = "https://temp_uri";
                 switch (result.Status)
                 {

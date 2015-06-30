@@ -36,14 +36,19 @@ namespace TestApp.PCL
         public TokenBroker()
         {
             this.sts = new AadSts();
-            context = new AuthenticationContext(this.sts.Authority, true);            
+            this.context = new AuthenticationContext(this.sts.Authority, true);            
+        }
+
+        public void ClearTokenCache()
+        {
+            this.context.TokenCache.Clear();
         }
 
         public async Task<string> GetTokenInteractiveAsync(IAuthorizationParameters parameters)
         {
             try
             {
-                var result = await context.AcquireTokenAsync(sts.ValidResource, sts.ValidClientId, sts.ValidNonExistingRedirectUri, parameters, new UserIdentifier(sts.ValidUserName, UserIdentifierType.OptionalDisplayableId));
+                var result = await context.AcquireTokenAsync(sts.ValidResource, sts.ValidClientId, sts.ValidNonExistingRedirectUri, parameters, new UserIdentifier(sts.ValidUserName2, UserIdentifierType.OptionalDisplayableId));
 
                 return result.AccessToken;
             }

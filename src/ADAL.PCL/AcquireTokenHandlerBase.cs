@@ -169,14 +169,14 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
 
         protected virtual async Task<AuthenticationResult> SendTokenRequestAsync()
         {
-            var requestParameters = new DictionaryRequestParameters(this.Resource, this.ClientKey);
+            var requestParameters = new DictionaryRequestParameters(this.Authenticator.Authority, this.Resource, this.ClientKey);
             this.AddAditionalRequestParameters(requestParameters);
             return await this.SendHttpMessageAsync(requestParameters);
         }
 
         protected async Task<AuthenticationResult> SendTokenRequestByRefreshTokenAsync(string refreshToken)
         {
-            var requestParameters = new DictionaryRequestParameters(this.Resource, this.ClientKey);
+            var requestParameters = new DictionaryRequestParameters(this.Authenticator.Authority, this.Resource, this.ClientKey);
             requestParameters[OAuthParameter.GrantType] = OAuthGrantType.RefreshToken;
             requestParameters[OAuthParameter.RefreshToken] = refreshToken;
             AuthenticationResult result = await this.SendHttpMessageAsync(requestParameters);

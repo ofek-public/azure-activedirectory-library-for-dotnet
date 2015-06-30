@@ -28,7 +28,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         private static SemaphoreSlim returnedUriReady;
         private static AuthorizationResult authorizationResult;
 
-        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, CallState callState)
+        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, DictionaryRequestParameters requestParameters, CallState callState)
         {
             returnedUriReady = new SemaphoreSlim(0);
             Authenticate(authorizationUri, redirectUri, callState);

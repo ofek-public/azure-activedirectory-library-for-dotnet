@@ -61,6 +61,11 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
             return true;
         }
 
+        public virtual bool GetCacheStorePolicy(IAuthorizationParameters parameters)
+        {
+            return true;
+        }
+
         public virtual Uri ValidateRedirectUri(Uri redirectUri, CallState callState)
         {
             if (redirectUri == null)

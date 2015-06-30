@@ -31,7 +31,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory.Internal
 
         public Object OwnerWindow { get; set; }
 
-        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, CallState callState)
+        public async Task<AuthorizationResult> AcquireAuthorizationAsync(Uri authorizationUri, Uri redirectUri, DictionaryRequestParameters requestParameters, CallState callState)
         {
             AuthorizationResult authorizationResult = null;
 
