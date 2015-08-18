@@ -63,7 +63,9 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory
         private static RSACryptoServiceProvider GetCryptoProviderForSha256(RSACryptoServiceProvider rsaProvider)
         {
             const int PROV_RSA_AES = 24;    // CryptoApi provider type for an RSA provider supporting sha-256 digital signatures
-            if (rsaProvider.CspKeyContainerInfo.ProviderType == PROV_RSA_AES)
+
+            // On Mono, use the default ProviderType
+            if (rsaProvider.CspKeyContainerInfo.ProviderType == PROV_RSA_AES || Mono.IsMono())
             {
                 return rsaProvider;
             }

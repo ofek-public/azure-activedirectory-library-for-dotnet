@@ -166,6 +166,9 @@
     <Compile Include="..\ADAL.Common\MexParser.cs">
       <Link>Common\MexParser.cs</Link>
     </Compile>
+    <Compile Include="..\ADAL.Common\Mono.cs">
+      <Link>Common\Mono.cs</Link>
+    </Compile>
     <Compile Include="..\ADAL.Common\NetworkPlugin.cs">
       <Link>Common\NetworkPlugin.cs</Link>
     </Compile>
